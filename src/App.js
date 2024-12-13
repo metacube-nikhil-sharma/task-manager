@@ -3,15 +3,15 @@ import './App.css';
 import Body from './Components/Body';
 import NavBar from './Components/NavBar';
 import TaskModal from './Components/TaskModal';
+import UpdateModal from './Components/UpdateModal';
 
 const App = () => {
-  const [tasks, setTasks] = useState([
-    { id: 1, title: 'Task 1', description: 'Description 1', status: 'New', priority: 'High', creationTime: '2023-01-01', completionTime: null, statusId: 1 },
-    { id: 2, title: 'Task 2', description: 'Description 2', status: 'In Progress', priority: 'Medium', creationTime: '2023-01-02', completionTime: null, statusId: 2 },
-    { id: 3, title: 'Task 3', description: 'Description 3', status: 'Completed', priority: 'Low', creationTime: '2023-01-03', completionTime: '2023-01-04', statusId: 3 },
-  ]);
-  
+  const [tasks, setTasks] = useState([]);
+
+  const [updatedTask, setUpdatedTask] = useState();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
 
   const deleteTask = (id) => {
     setTasks(tasks.filter(task => task.id !== id));
@@ -21,11 +21,25 @@ const App = () => {
     setTasks([...tasks, newTask]);
   };
 
+  const updateTask = (updateTask) => {
+    const task = tasks.filter((tasks) => tasks.id === updateTask);
+    setUpdatedTask(task);
+    console.log(updatedTask);
+  };
+
+  const modifyTask = (updatedTask) => {
+    console.log(updatedTask);
+    setTasks(tasks.map(task =>
+      task.id === updatedTask.id ? { ...updatedTask } : task
+    ));
+  };
+
   return (
     <div className="App">
       <NavBar onNewTaskClick={() => setIsModalOpen(true)} />
       <TaskModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} addTask={addTask} />
-      <Body tasks={tasks} deleteTask={deleteTask} />
+      <UpdateModal isOpen={isUpdateOpen} onClose={() => setIsUpdateOpen(false)} updateTask={updateTask} loadTask={updatedTask} modifyTask={modifyTask} />
+      <Body tasks={tasks} deleteTask={deleteTask} onNewTaskClick={(task) => { updateTask(task); setIsUpdateOpen(true); }} />
     </div>
   );
 }

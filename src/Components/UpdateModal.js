@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './TaskModal.css';
 
-const TaskModal = ({ isOpen, onClose, addTask }) => {
+const UpdateModal = ({ isOpen, onClose, loadTask, modifyTask }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [status, setStatus] = useState('New');
     const [priority, setPriority] = useState('Medium');
-    const [creationTime, setCreationTime] = useState(new Date().toISOString().split('T')[0]);
+    const [creationTime, setCreationTime] = useState('');
 
     const modalRef = useRef();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const newTask = {
-            id: Date.now(),
+        const updatedTask = {
+            id: loadTask[0]?loadTask[0].id:Date.now(),
             title,
             description,
             status,
@@ -22,17 +22,7 @@ const TaskModal = ({ isOpen, onClose, addTask }) => {
             completionTime: null,
             statusId: status === 'New' ? 1 : status === 'In Progress' ? 2 : 3,
         };
-
-
-        addTask(newTask);
-
-        setTitle('');
-        setDescription('');
-        setPriority('Medium');
-        setStatus('New');
-        setCreationTime(new Date().toISOString().split('T')[0]);
-
-
+        modifyTask(updatedTask);
         onClose();
     };
 
@@ -43,23 +33,23 @@ const TaskModal = ({ isOpen, onClose, addTask }) => {
     };
 
     useEffect(() => {
-        if (isOpen) {
-
-            setTitle('');
-            setDescription('');
-            setStatus('New');
-            setPriority('Medium');
-            setCreationTime(new Date().toISOString().split('T')[0]);
+        if (isOpen && loadTask) {
+            console.log(loadTask[0].title);
+            setTitle(loadTask[0]?.title);
+            setDescription(loadTask[0]?.description);
+            setStatus(loadTask[0]?.status);
+            setPriority(loadTask[0]?.priority);
+            setCreationTime(loadTask[0]?.creationTime?.split('T')[0]);
             document.addEventListener('mousedown', handleClickOutside);
-        } 
-    }, [isOpen]);
+        }
+    }, [isOpen, loadTask]);
 
-    if (!isOpen) return null;
+    if (!isOpen || !loadTask) return null;
 
     return (
         <div className="modal-overlay">
             <div className="modal-content" ref={modalRef}>
-                <h2>Add New Task</h2>
+                <h2>Edit Task</h2>
                 <form onSubmit={handleSubmit}>
                     <label>
                         Title:
@@ -89,7 +79,7 @@ const TaskModal = ({ isOpen, onClose, addTask }) => {
                         Creation Time:
                         <input type="date" value={creationTime} onChange={(e) => setCreationTime(e.target.value)} />
                     </label>
-                    <button type="submit">Add Task</button>
+                    <button type="submit">Update Task</button>
                     <button type="button" onClick={onClose}>Cancel</button>
                 </form>
             </div>
@@ -97,4 +87,4 @@ const TaskModal = ({ isOpen, onClose, addTask }) => {
     );
 };
 
-export default TaskModal;
+export default UpdateModal;

@@ -1,9 +1,8 @@
 import React from 'react';
 import './TaskCard.css';
 
-const TaskCard = ({ task, deleteTask }) => {
-  
-  const isCompleted = task.completionTime !== null;
+const TaskCard = ({ task, deleteTask,updateTask }) => {
+  const isCompleted = task.status === 'Completed';
 
   return (
     <div className={`task-card-${task.statusId}`}>
@@ -22,7 +21,7 @@ const TaskCard = ({ task, deleteTask }) => {
         {!isCompleted && (
           <>
             <button className='btn' onClick={() => deleteTask(task.id)}>Delete</button>
-            <button className='btn'>Edit</button>
+            <button className='btn' onClick={() => updateTask(task.id)}>Edit</button>
           </>
         )}
       </div>
